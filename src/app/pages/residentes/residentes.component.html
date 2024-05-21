@@ -1,6 +1,13 @@
 <div class="container" >
   <h1>Listado de Residentes</h1>
 
-  <list-elements tableName="Residentes" [columns]="columns" [tableData]="tableData" />
+  <list-elements
+    tableName="Residentes"
+    [columns]="columns"
+    [tableData]="tableData"
+    [prevButton]="prevPage"
+    [nextButton]="nextPage"
+    gotoItems="vehicles"
+  />
 </div>
 

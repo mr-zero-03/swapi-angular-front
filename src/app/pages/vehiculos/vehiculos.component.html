@@ -1,6 +1,12 @@
 <div class="container" >
   <h1>Listado de vehiculos</h1>
 
-  <list-elements tableName="vehiculos" [columns]="columns" [tableData]="tableData" />
+  <list-elements
+    tableName="Vehiculos"
+    [columns]="columns"
+    [tableData]="tableData"
+    [prevButton]="prevPage"
+    [nextButton]="nextPage"
+  />
 </div>
 

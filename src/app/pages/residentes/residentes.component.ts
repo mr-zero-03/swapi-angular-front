@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ListComponent } from '../../components/list/list.component';
 import { ApiService } from '../../api/api.service';
-import { ActivatedRoute } from '@angular/router';
 
 @Component( {
   selector: 'app-residentes',
@@ -11,16 +10,17 @@ import { ActivatedRoute } from '@angular/router';
   imports: [ ListComponent ]
 } )
 
-
 export class ResidentesComponent implements OnInit {
   constructor(
-    private apiService: ApiService,
-    private route: ActivatedRoute
+    private apiService: ApiService
   ) {}
 
   // Local data
   tableData: any[] = [];
-  params: object = {};
+  params: any = {};
+  pagination: number = 0;
+  prevPagination: number = 0;
+  nextPagination: number = 0;
 
   columns: object[] = [
     { colName: 'name', show: true },
@@ -31,24 +31,41 @@ export class ResidentesComponent implements OnInit {
     { colName: 'eye_color', show: false },
     { colName: 'birth_year', show: false },
     { colName: 'gender', show: true },
-    { colName: 'homeworld', show: true },
+    { colName: 'homeworld', show: false },
     { colName: 'created', show: false },
     { colName: 'edited', show: false },
     { colName: 'url', show: false }
   ];
 
+  // Handlers
+  prevPage = () => {
+    this.pagination = this.prevPagination;
+
+    if ( !this.params[ 'ids' ] ) { this.getResidentes() }
+  }
+  nextPage = () => {
+    this.pagination = this.nextPagination;
+    if ( !this.params[ 'ids' ] ) { this.getResidentes() }
+  }
+
   // Events
   ngOnInit(): void {
-    this.getResidentes();
     this.getParams();
+    this.getResidentes();
   }
 
   // Getters
   getResidentes (): void {
-    this.apiService.getResidentes().subscribe(
-      ( data ) => {
-        this.tableData = data;
-        // console.log( this.tableData );
+    const ids: any[] = this.params[ 'ids' ] || [];
+
+    this.apiService.getAllResidentes( ids, this.pagination ).subscribe(
+      ( data: any ) => {
+        const prev = data[ 'previous' ] || '';
+        const next = data[ 'next' ] || '';
+
+        this.tableData = ( (ids.length > 0) ? data : data[ 'results' ] );
+        this.prevPagination = parseInt( prev.slice( prev.indexOf( 'page=' ) ).replace( 'page=', '' ) );
+        this.nextPagination = parseInt( next.slice( next.indexOf( 'page=' ) ).replace( 'page=', '' ) );
       },
       ( error ) => {
         console.error('Error al obtener los datos de residentes:', error);
@@ -60,11 +77,15 @@ export class ResidentesComponent implements OnInit {
     let params = {};
 
     URLParams.forEach( ( value, key ) => {
-      // params[ key ] = value;
-      params = { ...params, ...{ [key]: value } }
+      let realValue: any;
+
+      if ( key === 'ids' ) {
+        realValue = value.split( ',' );
+      }
+
+      params = { ...params, ...{ [key]: realValue } }
     } );
 
     this.params = params;
-    console.log( this.params );
   }
 }

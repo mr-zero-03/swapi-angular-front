@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { ListComponent } from '../../components/list/list.component';
 import { ApiService } from '../../api/api.service';
-import { ActivatedRoute } from '@angular/router';
 
 @Component( {
   selector: 'app-vehiculos',
@@ -13,13 +12,15 @@ import { ActivatedRoute } from '@angular/router';
 
 export class VehiculosComponent implements OnInit {
   constructor(
-    private apiService: ApiService,
-    private route: ActivatedRoute
+    private apiService: ApiService
   ) {}
 
   // Local data
   tableData: any[] = [];
-  params: any[] = [];
+  params: any = {};
+  pagination: number = 0;
+  prevPagination: number = 0;
+  nextPagination: number = 0;
 
   columns: object[] = [
     { colName: 'name', show: true },
@@ -40,24 +41,55 @@ export class VehiculosComponent implements OnInit {
     { colName: 'films', show: false }
   ];
 
+  // Handlers
+  prevPage = () => {
+    this.pagination = this.prevPagination;
+
+    if ( !this.params[ 'ids' ] ) { this.getVehiculos() }
+  }
+  nextPage = () => {
+    this.pagination = this.nextPagination;
+    if ( !this.params[ 'ids' ] ) { this.getVehiculos() }
+  }
+
   // Events
   ngOnInit(): void {
-    this.apiService.getVehiculos().subscribe(
-      ( data ) => {
-        this.tableData = data;
-        // console.log( this.tableData );
-      },
-      ( error ) => {
-        console.error('Error al obtener los datos de vehiculos:', error);
-      }
-    );
+    this.getParams();
+    this.getVehiculos();
   }
 
   // Getters
-  getParams (): void {
-    this.route.paramMap.subscribe( params => {
-      // this.itemId = params.get('id');
-      console.log( params );
+  getVehiculos (): void {
+    const ids: any[] = this.params[ 'ids' ] || [];
+
+    this.apiService.getAllVehiculos( ids, this.pagination ).subscribe(
+      ( data: any ) => {
+        const prev = data[ 'previous' ] || '';
+        const next = data[ 'next' ] || '';
+
+        this.tableData = ( (ids.length > 0) ? data : data[ 'results' ] );
+        this.prevPagination = parseInt( prev.slice( prev.indexOf( 'page=' ) ).replace( 'page=', '' ) );
+        this.nextPagination = parseInt( next.slice( next.indexOf( 'page=' ) ).replace( 'page=', '' ) );
+      },
+      ( error ) => {
+        console.error('Error al obtener los datos de Vehiculos:', error);
+      }
+    );
+  }
+  getParams () {
+    const URLParams = new URLSearchParams( window.location.search );
+    let params = {};
+
+    URLParams.forEach( ( value, key ) => {
+      let realValue: any;
+
+      if ( key === 'ids' ) {
+        realValue = value.split( ',' );
+      }
+
+      params = { ...params, ...{ [key]: realValue } }
     } );
+
+    this.params = params;
   }
 }
