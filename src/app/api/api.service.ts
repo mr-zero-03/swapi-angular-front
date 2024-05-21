@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
+import { Observable, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 @Injectable( {
@@ -13,19 +13,44 @@ export class ApiService {
   private apiUrl = 'https://swapi.dev/api/';
 
   // Getters
-  getPlanetas(): Observable<any> {
-    return this.http.get<any>( `${this.apiUrl}/planets` ).pipe(
-      map( data => data[ 'results' ] )
+  getAllData ( endpoint:string, pagination:number = 0 ): Observable<any> {
+    const params = ( pagination ) ? `?page=${pagination}` : '';
+
+    return this.http.get<any>( `${this.apiUrl}/${endpoint}/${params}` ).pipe(
+      map( data => data )
     );
   }
-  getResidentes(): Observable<any> {
-    return this.http.get<any>( `${this.apiUrl}/people` ).pipe(
-      map( data => data[ 'results' ] )
+  getDataId ( endpoint: string, id: any ): Observable<any> {
+    return this.http.get<any>( `${this.apiUrl}/${endpoint}/${id}` ).pipe(
+      map( data => data )
     );
   }
-  getVehiculos(): Observable<any> {
-    return this.http.get<any>( `${this.apiUrl}/vehicles` ).pipe(
-      map( data => data[ 'results' ] )
-    );
+
+
+  getAllPlanetas( ids:any[]=[], pagination:number=0 ): Observable<any> {
+    if ( ids.length > 0 ) {
+      const requests = ids.map( id => this.getDataId( 'planets', id ) );
+      return( forkJoin( requests ) );
+    } else {
+      return( this.getAllData( 'planets', pagination ) );
+    }
+  }
+
+  getAllResidentes( ids:any[]=[], pagination:number=0 ): Observable<any[]> {
+    if ( ids.length > 0 ) {
+      const requests = ids.map( id => this.getDataId( 'people', id ) );
+      return( forkJoin( requests ) );
+    } else {
+      return( this.getAllData( 'people', pagination ) );
+    }
+  }
+
+  getAllVehiculos( ids:any[]=[], pagination:number=0 ): Observable<any> {
+    if ( ids.length > 0 ) {
+      const requests = ids.map( id => this.getDataId( 'vehicles', id ) );
+      return( forkJoin( requests ) );
+    } else {
+      return( this.getAllData( 'vehicles', pagination ) );
+    }
   }
 }
