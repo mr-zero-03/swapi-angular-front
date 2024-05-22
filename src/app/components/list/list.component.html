@@ -9,7 +9,7 @@
   </section>
 
   <section class="table-container">
-    <table mat-table [dataSource]="tableData" class="mat-elevation-z8">
+    <table mat-table [dataSource]="tableData" class="mat-elevation-z8 table table-hover">
       @for ( column of displayedColumns; track column) {
         <!-- Columna {{column}} -->
         <ng-container matColumnDef="{{column}}">

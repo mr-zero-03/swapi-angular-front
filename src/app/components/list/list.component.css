@@ -41,3 +41,12 @@ section {
   overflow-x: auto;
   white-space: nowrap;
 }
+
+:host .list-container ::ng-deep .table-container table tbody tr {
+  cursor: pointer;
+}
+
+.lazy-loading {
+  display: grid;
+  justify-content: center;
+}
