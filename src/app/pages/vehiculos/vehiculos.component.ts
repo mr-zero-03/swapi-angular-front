@@ -21,6 +21,7 @@ export class VehiculosComponent implements OnInit {
   pagination: number = 0;
   prevPagination: number = 0;
   nextPagination: number = 0;
+  loading: boolean = true;
 
   columns: object[] = [
     { colName: 'name', show: true },
@@ -70,9 +71,11 @@ export class VehiculosComponent implements OnInit {
         this.tableData = ( (ids.length > 0) ? data : data[ 'results' ] );
         this.prevPagination = parseInt( prev.slice( prev.indexOf( 'page=' ) ).replace( 'page=', '' ) );
         this.nextPagination = parseInt( next.slice( next.indexOf( 'page=' ) ).replace( 'page=', '' ) );
+        this.loading = false;
       },
       ( error ) => {
         console.error('Error al obtener los datos de Vehiculos:', error);
+        this.loading = false;
       }
     );
   }
