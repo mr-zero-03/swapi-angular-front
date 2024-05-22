@@ -1,5 +1,23 @@
 # PruebaTecnicaAngular
 
+## Arhivos empleados
+Tomando la carpeta src/app como raiz, tenemos que:
+
+En el componente de "list" se definen los props
+- components/ --> Es la carpeta que almacena todos los componentes
+- components/list/ --> Componente dinamico que permite mostrar la informaciom de cada vista en tabla
+
+Cada vista se encarga de sacar los datos respectivos desde el controlador y pasarlos al componente list
+- pages/ --> Es la carpeta que almacena nuestras paginas o vistas
+- pages/planetas/ --> Vista empleada para el listado de planetas
+- pages/residentes/ --> Vista empleada para el listado de residentes
+- pages/vehiculos/ --> Vista empleada para el listado de vehiculos
+
+- api/ --> Es nuestro servicio que se encarga de consumir los datos del API de swapi.dev
+
+- app.routes.ts --> Archivo en donde configuramos cada una de las rutas de nuestra App
+
+
 This project was generated with [Angular CLI](https://github.com/angular/angular-cli) version 17.3.7.
 
 ## Development server
