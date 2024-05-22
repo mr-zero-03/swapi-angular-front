@@ -50,3 +50,8 @@ section {
   display: grid;
   justify-content: center;
 }
+
+.table-filters button,
+.table-filters input {
+  margin: 0px 10px 0px 0px;
+}

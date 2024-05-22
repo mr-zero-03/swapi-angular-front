@@ -3,6 +3,7 @@ import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
+import { MatInputModule } from '@angular/material/input';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
@@ -16,7 +17,8 @@ import { Router } from '@angular/router';
     MatPaginatorModule,
     MatButtonModule,
     CommonModule,
-    MatProgressSpinnerModule
+    MatProgressSpinnerModule,
+    MatInputModule
   ]
 } )
 
@@ -60,10 +62,15 @@ export class ListComponent implements OnInit, OnChanges {
       this.router.navigate( [ `/${pageToGo}` ], { queryParams } );
     }
   }
+  keyupInputSearch = ( event: any ) => {
+    this.inputSearch = event.target.value;
+  }
 
   // Local props
   displayedColumns: string[] = [];
   showData: boolean = false;
+  sortedData: any[] = [];
+  inputSearch: string = 'default';
 
   // Events
   ngOnInit(): void {
@@ -75,6 +82,11 @@ export class ListComponent implements OnInit, OnChanges {
 
     if ( changes[ 'tableData' ] ) {
       this.showData = ( this.tableData.length > 0 );
+      this.sortedData = [...this.tableData];
+    }
+
+    if ( changes[ 'inputSearch' ] ) {
+      console.log( this.inputSearch );
     }
   }
 
@@ -83,5 +95,26 @@ export class ListComponent implements OnInit, OnChanges {
     this.displayedColumns = this.columns
     .filter( item => item.show )
     .map( item => item.colName );
+  }
+
+
+  // Table Filters
+  sortByNameAZ() {
+    this.sortedData = [...this.tableData];
+    this.sortedData.sort( (a, b) => a.name.localeCompare(b.name) );
+  }
+  sortByNameZA() {
+    this.sortedData = [...this.tableData];
+    this.sortedData.sort( (a, b) => b.name.localeCompare(a.name) );
+  }
+  filterByName( event: any ) {
+    this.sortedData = [...this.tableData];
+
+    if ( event.keyCode === 13 ) { // Enter button
+      let filterValue = this.inputSearch;
+      filterValue = filterValue.trim().toLowerCase();
+
+      this.sortedData = this.sortedData.filter( item => item.name.toLowerCase().includes( filterValue ) );
+    }
   }
 }

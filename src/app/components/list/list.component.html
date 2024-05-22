@@ -21,7 +21,13 @@
   </div>
 
   <section class="table-container">
-    <table mat-table [dataSource]="tableData" class="mat-elevation-z8 table table-hover">
+    <div class="table-filters">
+      <button mat-raised-button color="primary" (click)="sortByNameAZ()">Ordenar por Nombre A-Z</button>
+      <button mat-raised-button color="primary" (click)="sortByNameZA()">Ordenar por Nombre Z-A</button>
+      <input matInput placeholder="Ex. Pizza" (keyup)="keyupInputSearch($event)" (keyup)="filterByName($event)" />
+    </div>
+
+    <table mat-table [dataSource]="sortedData" class="mat-elevation-z8 table table-hover">
       @for ( column of displayedColumns; track column) {
         <!-- Columna {{column}} -->
         <ng-container matColumnDef="{{column}}">
