@@ -21,7 +21,7 @@ export class ApiService {
     );
   }
   getDataId ( endpoint: string, id: any ): Observable<any> {
-    return this.http.get<any>( `${this.apiUrl}/${endpoint}/${id}` ).pipe(
+    return this.http.get<any>( `${this.apiUrl}/${endpoint}/${ (id) ? id : 'null' }` ).pipe(
       map( data => data )
     );
   }
