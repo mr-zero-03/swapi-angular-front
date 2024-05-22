@@ -1,12 +1,24 @@
 <div class="list-container px-4 pb-4" >
   <!-- <h3>{{tableName}}</h3> -->
 
-  <section>
-    <div class="example-button-row">
-      <button (click)="prevButtonEvent()" mat-raised-button color="primary">Prev Page</button>
-      <button (click)="nextButtonEvent()" class="next-btn" mat-raised-button color="primary">Next Page</button>
-    </div>
-  </section>
+  <div *ngIf="loading" class="lazy-loading">
+    <mat-spinner></mat-spinner>
+  </div>
+
+  <div *ngIf="showData && !loading">
+    <section>
+      <div class="example-button-row">
+        <button (click)="prevButtonEvent()" mat-raised-button color="primary">Prev Page</button>
+        <button (click)="nextButtonEvent()" class="next-btn" mat-raised-button color="primary">Next Page</button>
+      </div>
+    </section>
+  </div>
+  <div class="text-center" *ngIf="!showData">
+    <p class="h2"> <span class="badge text-bg-danger">
+      La tabla está vacía!
+      <i class="bi bi-exclamation-triangle"></i>
+    </span> </p>
+  </div>
 
   <section class="table-container">
     <table mat-table [dataSource]="tableData" class="mat-elevation-z8 table table-hover">

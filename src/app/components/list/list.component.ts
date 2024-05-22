@@ -1,7 +1,9 @@
 import { Component, Input, OnInit, OnChanges, SimpleChanges } from '@angular/core';
-import { MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatTableModule } from '@angular/material/table';
 import { MatButtonModule } from '@angular/material/button';
+import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 
 @Component( {
@@ -9,7 +11,13 @@ import { Router } from '@angular/router';
   standalone: true,
   templateUrl: './list.component.html',
   styleUrl: './list.component.css',
-  imports: [ MatTableModule, MatPaginatorModule, MatButtonModule ]
+  imports: [
+    MatTableModule,
+    MatPaginatorModule,
+    MatButtonModule,
+    CommonModule,
+    MatProgressSpinnerModule
+  ]
 } )
 
 export class ListComponent implements OnInit, OnChanges {
@@ -22,6 +30,7 @@ export class ListComponent implements OnInit, OnChanges {
   @Input() gotoItems: string = '';
   @Input() tableData: any[] = [];
   @Input() columns: any[] = [];
+  @Input() loading: boolean = true;
   @Input() prevButton: () => void = () => { console.log( 'Click on prevButton!' ) };
   @Input() nextButton: () => void = () => { console.log( 'Click on nextButton!' ) };
 
@@ -52,9 +61,9 @@ export class ListComponent implements OnInit, OnChanges {
     }
   }
 
-
   // Local props
   displayedColumns: string[] = [];
+  showData: boolean = false;
 
   // Events
   ngOnInit(): void {
@@ -62,9 +71,10 @@ export class ListComponent implements OnInit, OnChanges {
   ngOnChanges( changes: SimpleChanges ) {
     if ( changes[ 'columns' ] ) {
       this.setDisplayedColumns();
+    }
 
-      // console.log( 'columns:', this.columns );
-      // console.log( 'displayedColumns:', this.displayedColumns );
+    if ( changes[ 'tableData' ] ) {
+      this.showData = ( this.tableData.length > 0 );
     }
   }
 
