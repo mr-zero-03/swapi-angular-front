@@ -35,3 +35,9 @@ section {
   float: right;
   padding: 0px 10px;
 }
+
+.list-container .table-container {
+  display: block;
+  overflow-x: auto;
+  white-space: nowrap;
+}
